@@ -109,5 +109,16 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// Check Twilio status
+async function checkStatus() {
+  try {
+    const res = await fetch('/api/status');
+    const { twilioConfigured } = await res.json();
+    const warning = document.getElementById('twilio-warning');
+    warning.style.display = twilioConfigured ? 'none' : 'block';
+  } catch { /* ignore */ }
+}
+
 // Load on startup
+checkStatus();
 loadReminders();

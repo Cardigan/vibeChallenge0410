@@ -83,13 +83,30 @@ app.delete('/api/reminders/:id', (req, res) => {
   res.json({ message: 'Reminder cancelled.' });
 });
 
+// Check if Twilio is configured
+function isTwilioConfigured() {
+  const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } =
+    process.env;
+  return !!(TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_PHONE_NUMBER);
+}
+
+// Status endpoint so the UI can show Twilio config state
+app.get('/api/status', (_req, res) => {
+  res.json({ twilioConfigured: isTwilioConfigured() });
+});
+
 // Make a Twilio call with inline TwiML
 async function makeCall(to) {
   const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } =
     process.env;
 
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
-    console.error('Twilio credentials not configured. Skipping call.');
+    console.error('═══════════════════════════════════════════════════');
+    console.error('  REMINDER FIRED but Twilio is not configured!');
+    console.error(`  Would have called: ${to}`);
+    console.error(`  Message: "${REMINDER_MESSAGE}"`);
+    console.error('  → Set up .env with Twilio credentials to enable calls.');
+    console.error('═══════════════════════════════════════════════════');
     return;
   }
 

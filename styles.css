@@ -136,3 +136,20 @@ input:focus {
   color: #666;
   font-style: italic;
 }
+
+.warning {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: #332800;
+  border: 1px solid #665200;
+  border-radius: 8px;
+  color: #ffcc00;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.warning code {
+  background: #44360a;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
