@@ -6,14 +6,17 @@ const timeInput = document.getElementById('reminder-time');
 const feedback = document.getElementById('feedback');
 const reminderList = document.getElementById('reminder-list');
 
-// Set min datetime to now
-function setMinTime() {
+// Set min datetime to now and default to now + 1 minute
+function setMinAndDefaultTime() {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   timeInput.min = now.toISOString().slice(0, 16);
+
+  const defaultTime = new Date(now.getTime() + 60000);
+  timeInput.value = defaultTime.toISOString().slice(0, 16);
 }
-setMinTime();
-setInterval(setMinTime, 60000);
+setMinAndDefaultTime();
+setInterval(setMinAndDefaultTime, 60000);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -46,7 +49,7 @@ form.addEventListener('submit', async (e) => {
       'success'
     );
     form.reset();
-    setMinTime();
+    setMinAndDefaultTime();
     loadReminders();
   } catch {
     showFeedback('Network error. Is the server running?', 'error');
