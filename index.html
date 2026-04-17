@@ -18,12 +18,33 @@
 
     <form id="reminder-form">
       <label for="phone">Phone Number</label>
-      <input
-        type="tel"
-        id="phone"
-        placeholder="4155551234"
-        required
-      />
+      <div class="phone-row">
+        <input
+          type="tel"
+          id="phone"
+          placeholder="4155551234"
+          required
+        />
+        <button type="button" class="verify-btn" id="verify-btn">Verify</button>
+      </div>
+
+      <div id="verify-section" style="display:none">
+        <label for="verify-code">Verification Code</label>
+        <div class="phone-row">
+          <input
+            type="text"
+            id="verify-code"
+            placeholder="123456"
+            maxlength="6"
+            pattern="\d{6}"
+          />
+          <button type="button" class="verify-btn" id="check-code-btn">Confirm</button>
+        </div>
+      </div>
+
+      <div id="verified-badge" class="verified-badge" style="display:none">
+        ✅ Phone verified
+      </div>
 
       <label for="reminder-time">Reminder Time</label>
       <input
@@ -32,8 +53,15 @@
         required
       />
 
+      <label for="custom-message">Message (optional)</label>
+      <textarea
+        id="custom-message"
+        placeholder="Leave blank for default sev 1 alert message"
+        rows="2"
+      ></textarea>
+
       <div class="btn-row">
-        <button type="submit" class="submit-btn">Set Reminder</button>
+        <button type="submit" class="submit-btn" id="submit-btn" disabled>Set Reminder</button>
         <button type="button" class="test-btn" id="test-call-btn">📞 Test Call Now</button>
       </div>
     </form>
