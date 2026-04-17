@@ -88,14 +88,15 @@ app.post('/api/reminders', async (req, res) => {
     });
   }
 
-  const verified = await db.isPhoneVerified(phoneNumber);
-  if (!verified) {
-    return res.status(403).json({
-      error: 'Phone number must be verified before scheduling reminders.',
-    });
-  }
+  // Verification is optional for now (A2P 10DLC pending)
+  // const verified = await db.isPhoneVerified(phoneNumber);
+  // if (!verified) {
+  //   return res.status(403).json({
+  //     error: 'Phone number must be verified before scheduling reminders.',
+  //   });
+  // }
 
-  const scheduledDate = new Date(req.body.reminderTime);
+  const scheduledDate= new Date(req.body.reminderTime);
   if (isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
     return res
       .status(400)

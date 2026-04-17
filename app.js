@@ -109,7 +109,8 @@ function setVerified(verified) {
   phoneVerified = verified;
   verifiedBadge.style.display = verified ? 'block' : 'none';
   verifySection.style.display = 'none';
-  submitBtn.disabled = !verified;
+  // Verification is optional — submit always enabled
+  submitBtn.disabled = false;
   if (verified) {
     verifyBtn.textContent = '✅';
     verifyBtn.disabled = true;
