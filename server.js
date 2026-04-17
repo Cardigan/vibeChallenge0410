@@ -37,10 +37,11 @@ app.post('/api/reminders', (req, res) => {
 
   const id = String(nextId++);
 
-  const job = schedule.scheduleJob(scheduledDate, async () => {
+  const job = schedule.scheduleJob(scheduledDate, () => {
     console.log(`Firing reminder ${id} — calling ${phoneNumber}`);
-    await makeCall(phoneNumber);
-    reminders.delete(id);
+    makeCall(phoneNumber)
+      .catch((err) => console.error(`Unhandled error in reminder ${id}:`, err.message))
+      .finally(() => reminders.delete(id));
   });
 
   reminders.set(id, {
@@ -87,7 +88,12 @@ app.delete('/api/reminders/:id', (req, res) => {
 function isTwilioConfigured() {
   const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } =
     process.env;
-  return !!(TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_PHONE_NUMBER);
+  return !!(
+    TWILIO_ACCOUNT_SID &&
+    TWILIO_ACCOUNT_SID.startsWith('AC') &&
+    TWILIO_AUTH_TOKEN &&
+    TWILIO_PHONE_NUMBER
+  );
 }
 
 // Status endpoint so the UI can show Twilio config state
@@ -110,9 +116,8 @@ async function makeCall(to) {
     return;
   }
 
-  const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
-
   try {
+    const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
     const call = await client.calls.create({
       twiml: `<Response><Say voice="alice">${REMINDER_MESSAGE}</Say></Response>`,
       to,
@@ -127,12 +132,18 @@ async function makeCall(to) {
 app.listen(PORT, () => {
   console.log(`Reminder app running at http://localhost:${PORT}`);
 
-  const hasTwilio =
-    process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN;
-  if (!hasTwilio) {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+
+  if (!sid || !token) {
     console.log(
       'WARNING: Twilio credentials not set. Calls will not be made.'
     );
     console.log('Copy .env.example to .env and fill in your Twilio details.');
+  } else if (!sid.startsWith('AC')) {
+    console.log(
+      'WARNING: TWILIO_ACCOUNT_SID should start with "AC". Check your .env file.'
+    );
+    console.log('Find your Account SID at https://console.twilio.com');
   }
 });
