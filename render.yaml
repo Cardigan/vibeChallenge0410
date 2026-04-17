@@ -1,9 +1,7 @@
 services:
   - type: web
     name: phone-reminder
-    runtime: node
-    buildCommand: npm install
-    startCommand: npm start
+    runtime: docker
     envVars:
       - key: TWILIO_ACCOUNT_SID
         sync: false
