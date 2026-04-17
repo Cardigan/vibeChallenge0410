@@ -74,7 +74,9 @@ form.addEventListener('submit', async (e) => {
       `Reminder set! We'll call ${data.phoneNumber} at ${formatTime(data.reminderTime)}`,
       'success'
     );
+    const savedPhone = phoneInput.value;
     form.reset();
+    phoneInput.value = savedPhone;
     setMinAndDefaultTime();
     loadReminders();
   } catch {
