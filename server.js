@@ -15,8 +15,11 @@ const TEST_CALL_MESSAGE =
   'A sev 1 incident has been raised against your service. ' +
   'You are the D.R.I. Panic Panic Panic!';
 
-// In-memory job map (keyed by DB reminder id)
+// In-memory job map (keyed by reminder id)
 const scheduledJobs = new Map();
+// In-memory fallback when DB is unavailable
+const inMemoryReminders = new Map();
+let nextInMemoryId = 1;
 let dbReady = false;
 
 // Normalize phone number: assume US (+1) if no country code
@@ -50,7 +53,10 @@ function scheduleReminder(reminder) {
     console.log(`Firing missed reminder ${reminder.id} — calling ${reminder.phone_number}`);
     makeCall(reminder.phone_number, reminder.message)
       .catch((err) => console.error(`Error in reminder ${reminder.id}:`, err.message))
-      .then(() => db.markFired(reminder.id));
+      .then(() => {
+        if (dbReady) db.markFired(reminder.id);
+        else inMemoryReminders.delete(String(reminder.id));
+      });
     return;
   }
 
@@ -59,7 +65,8 @@ function scheduleReminder(reminder) {
     makeCall(reminder.phone_number, reminder.message)
       .catch((err) => console.error(`Error in reminder ${reminder.id}:`, err.message))
       .then(() => {
-        db.markFired(reminder.id);
+        if (dbReady) db.markFired(reminder.id);
+        else inMemoryReminders.delete(String(reminder.id));
         scheduledJobs.delete(String(reminder.id));
       });
   });
@@ -80,7 +87,6 @@ function requireDb(res) {
 }
 
 app.post('/api/reminders', async (req, res) => {
-  if (!requireDb(res)) return;
   const phoneNumber = normalizePhone(req.body.phoneNumber);
 
   if (!phoneNumber) {
@@ -88,14 +94,6 @@ app.post('/api/reminders', async (req, res) => {
       error: 'Invalid phone number. Example: 4155551234 or +14155551234',
     });
   }
-
-  // Verification is optional for now (A2P 10DLC pending)
-  // const verified = await db.isPhoneVerified(phoneNumber);
-  // if (!verified) {
-  //   return res.status(403).json({
-  //     error: 'Phone number must be verified before scheduling reminders.',
-  //   });
-  // }
 
   const scheduledDate= new Date(req.body.reminderTime);
   if (isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
@@ -107,7 +105,14 @@ app.post('/api/reminders', async (req, res) => {
   const message = req.body.message?.trim() || null;
 
   try {
-    const reminder = await db.createReminder(phoneNumber, scheduledDate, message);
+    let reminder;
+    if (dbReady) {
+      reminder = await db.createReminder(phoneNumber, scheduledDate, message);
+    } else {
+      const id = String(nextInMemoryId++);
+      reminder = { id, phone_number: phoneNumber, reminder_time: scheduledDate.toISOString(), message, status: 'pending' };
+      inMemoryReminders.set(id, reminder);
+    }
     scheduleReminder(reminder);
 
     console.log(`Reminder ${reminder.id} scheduled for ${reminder.reminder_time}`);
@@ -124,9 +129,13 @@ app.post('/api/reminders', async (req, res) => {
 });
 
 app.get('/api/reminders', async (_req, res) => {
-  if (!requireDb(res)) return;
   try {
-    const reminders = await db.getPendingReminders();
+    let reminders;
+    if (dbReady) {
+      reminders = await db.getPendingReminders();
+    } else {
+      reminders = Array.from(inMemoryReminders.values()).filter(r => r.status === 'pending');
+    }
     res.json(
       reminders.map((r) => ({
         id: r.id,
@@ -142,9 +151,13 @@ app.get('/api/reminders', async (_req, res) => {
 });
 
 app.delete('/api/reminders/:id', async (req, res) => {
-  if (!requireDb(res)) return;
   try {
-    const cancelled = await db.deleteReminder(req.params.id);
+    let cancelled;
+    if (dbReady) {
+      cancelled = await db.deleteReminder(req.params.id);
+    } else {
+      cancelled = inMemoryReminders.delete(req.params.id);
+    }
     if (!cancelled) {
       return res.status(404).json({ error: 'Reminder not found.' });
     }

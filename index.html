@@ -30,8 +30,10 @@
           placeholder="4155551234"
           required
         />
-        <button type="button" class="verify-btn" id="verify-btn">Verify</button>
+        <button type="button" class="verify-btn" id="verify-btn" disabled title="SMS verification pending Twilio approval">Verify</button>
       </div>
+
+      <p class="verify-notice">📋 Phone verification is temporarily unavailable while our SMS service is being approved by Twilio. You can still set reminders and test calls.</p>
 
       <div class="consent-row">
         <label class="checkbox-label">

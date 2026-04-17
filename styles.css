@@ -2,6 +2,13 @@
   box-sizing: border-box;
 }
 
+.verify-notice {
+  color: #f0ad4e;
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0.5rem;
+  line-height: 1.4;
+}
+
 body {
   font-family: system-ui, sans-serif;
   display: flex;
