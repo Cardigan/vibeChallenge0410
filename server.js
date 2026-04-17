@@ -11,7 +11,8 @@ app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 const TEST_CALL_MESSAGE =
-  '... A sev 1 has been raised against your service. ' +
+  '... You are the D.R.I.' + 
+  'A sev 1 incident has been raised against your service. ' +
   'You are the D.R.I. Panic Panic Panic!';
 
 // In-memory job map (keyed by DB reminder id)
