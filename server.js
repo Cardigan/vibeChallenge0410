@@ -10,10 +10,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
-const DELAY_PHONE_PICKUP = "... ... ... ... "
 const TEST_CALL_MESSAGE =
-  DELAY_PHONE_PICKUP + 
-  'You are the D.R.I.' + 
+  'You are the D.R.I. ' + 
   'A sev 1 incident has been raised against your service. ' +
   'You are the D.R.I. Panic Panic Panic!';
 
@@ -303,7 +301,7 @@ async function makeCall(to, customMessage) {
   try {
     const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
     const call = await client.calls.create({
-      twiml: `<Response><Say voice="alice">${safeMessage}</Say></Response>`,
+      twiml: `<Response><Pause length="1"/><Say voice="alice">${safeMessage}</Say></Response>`,
       to,
       from: TWILIO_PHONE_NUMBER,
     });
