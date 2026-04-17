@@ -84,6 +84,27 @@ app.delete('/api/reminders/:id', (req, res) => {
   res.json({ message: 'Reminder cancelled.' });
 });
 
+// Test call — calls immediately
+app.post('/api/test-call', async (req, res) => {
+  const { phoneNumber } = req.body;
+
+  if (!phoneNumber || !/^\+[1-9]\d{6,14}$/.test(phoneNumber)) {
+    return res.status(400).json({
+      error: 'Invalid phone number. Use E.164 format (e.g. +14155551234)',
+    });
+  }
+
+  if (!isTwilioConfigured()) {
+    return res.status(503).json({
+      error: 'Twilio is not configured. Set up your .env file first.',
+    });
+  }
+
+  console.log(`Test call requested to ${phoneNumber}`);
+  await makeCall(phoneNumber);
+  res.json({ message: `Test call initiated to ${phoneNumber}` });
+});
+
 // Check if Twilio is configured
 function isTwilioConfigured() {
   const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } =

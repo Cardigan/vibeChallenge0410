@@ -16,6 +16,32 @@ function setMinAndDefaultTime() {
   timeInput.value = defaultTime.toISOString().slice(0, 16);
 }
 setMinAndDefaultTime();
+
+// Test call button
+document.getElementById('test-call-btn').addEventListener('click', async () => {
+  const phoneNumber = phoneInput.value.trim();
+  if (!phoneNumber.startsWith('+')) {
+    showFeedback('Enter a phone number first (e.g. +14155551234)', 'error');
+    return;
+  }
+
+  showFeedback('Calling now...', 'success');
+  try {
+    const res = await fetch('/api/test-call', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phoneNumber }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showFeedback(data.error || 'Test call failed.', 'error');
+    } else {
+      showFeedback(data.message, 'success');
+    }
+  } catch {
+    showFeedback('Network error. Is the server running?', 'error');
+  }
+});
 setInterval(setMinAndDefaultTime, 60000);
 
 form.addEventListener('submit', async (e) => {
