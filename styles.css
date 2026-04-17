@@ -1,10 +1,138 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: system-ui, sans-serif;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start;
+  min-height: 100vh;
   margin: 0;
+  padding: 2rem 1rem;
   background: #111;
   color: #eee;
+}
+
+.container {
+  width: 100%;
+  max-width: 440px;
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.8rem;
+}
+
+.subtitle {
+  color: #999;
+  margin: 0 0 1.5rem;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 2rem 0 0.75rem;
+  color: #bbb;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+input[type="tel"],
+input[type="datetime-local"] {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 1rem;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #eee;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4f8cff;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: #4f8cff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit-btn:hover {
+  background: #3a6fd8;
+}
+
+.feedback {
+  margin-top: 0.75rem;
+  padding: 0;
+  font-size: 0.9rem;
+  min-height: 1.4rem;
+}
+
+.feedback.success {
+  color: #4caf50;
+}
+
+.feedback.error {
+  color: #f44336;
+}
+
+.reminder-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.reminder-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.reminder-phone {
+  font-weight: 600;
+}
+
+.reminder-time {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.cancel-btn {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #f44336;
+  border-radius: 6px;
+  background: transparent;
+  color: #f44336;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #f4433622;
+}
+
+.empty {
+  color: #666;
+  font-style: italic;
 }

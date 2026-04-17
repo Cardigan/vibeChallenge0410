@@ -3,10 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vibe Challenge</title>
+  <title>Phone Reminder</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <p>Welcome to Vibe Challenge 04/10.</p>
+  <div class="container">
+    <h1>📞 Phone Reminder</h1>
+    <p class="subtitle">Schedule a call to remind you at the right time.</p>
+
+    <form id="reminder-form">
+      <label for="phone">Phone Number</label>
+      <input
+        type="tel"
+        id="phone"
+        placeholder="+14155551234"
+        required
+      />
+
+      <label for="reminder-time">Reminder Time</label>
+      <input
+        type="datetime-local"
+        id="reminder-time"
+        required
+      />
+
+      <button type="submit" class="submit-btn">Set Reminder</button>
+    </form>
+
+    <div id="feedback" class="feedback"></div>
+
+    <h2>Upcoming Reminders</h2>
+    <div id="reminder-list">
+      <p class="empty">No upcoming reminders.</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
