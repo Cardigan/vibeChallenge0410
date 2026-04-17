@@ -16,6 +16,7 @@ const TEST_CALL_MESSAGE =
 
 // In-memory job map (keyed by DB reminder id)
 const scheduledJobs = new Map();
+let dbReady = false;
 
 // Normalize phone number: assume US (+1) if no country code
 function normalizePhone(raw) {
@@ -67,7 +68,18 @@ function scheduleReminder(reminder) {
 
 // ── Reminder endpoints ──
 
+function requireDb(res) {
+  if (!dbReady) {
+    res.status(503).json({
+      error: 'Database is not connected. Set DATABASE_URL in your .env file and restart the server.',
+    });
+    return false;
+  }
+  return true;
+}
+
 app.post('/api/reminders', async (req, res) => {
+  if (!requireDb(res)) return;
   const phoneNumber = normalizePhone(req.body.phoneNumber);
 
   if (!phoneNumber) {
@@ -110,6 +122,7 @@ app.post('/api/reminders', async (req, res) => {
 });
 
 app.get('/api/reminders', async (_req, res) => {
+  if (!requireDb(res)) return;
   try {
     const reminders = await db.getPendingReminders();
     res.json(
@@ -127,6 +140,7 @@ app.get('/api/reminders', async (_req, res) => {
 });
 
 app.delete('/api/reminders/:id', async (req, res) => {
+  if (!requireDb(res)) return;
   try {
     const cancelled = await db.deleteReminder(req.params.id);
     if (!cancelled) {
@@ -170,6 +184,7 @@ app.post('/api/test-call', async (req, res) => {
 // ── Phone verification endpoints ──
 
 app.post('/api/verify/send', async (req, res) => {
+  if (!requireDb(res)) return;
   const phoneNumber = normalizePhone(req.body.phoneNumber);
   if (!phoneNumber) {
     return res.status(400).json({ error: 'Invalid phone number.' });
@@ -203,6 +218,7 @@ app.post('/api/verify/send', async (req, res) => {
 });
 
 app.post('/api/verify/check', async (req, res) => {
+  if (!requireDb(res)) return;
   const phoneNumber = normalizePhone(req.body.phoneNumber);
   const { code } = req.body;
 
@@ -224,6 +240,7 @@ app.post('/api/verify/check', async (req, res) => {
 });
 
 app.get('/api/verify/:phone', async (req, res) => {
+  if (!requireDb(res)) return;
   const phoneNumber = normalizePhone(req.params.phone);
   if (!phoneNumber) {
     return res.status(400).json({ error: 'Invalid phone number.' });
@@ -240,7 +257,7 @@ app.get('/api/verify/:phone', async (req, res) => {
 // ── Status endpoint ──
 
 app.get('/api/status', (_req, res) => {
-  res.json({ twilioConfigured: isTwilioConfigured() });
+  res.json({ twilioConfigured: isTwilioConfigured(), dbConnected: dbReady });
 });
 
 // ── Twilio call helper ──
@@ -285,6 +302,7 @@ async function start() {
   if (process.env.DATABASE_URL) {
     try {
       await db.initDb();
+      dbReady = true;
 
       const pending = await db.getPendingReminders();
       console.log(`Restoring ${pending.length} pending reminder(s)`);

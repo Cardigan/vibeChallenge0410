@@ -12,8 +12,13 @@
     <p class="subtitle">Schedule a call to remind you at the right time.</p>
 
     <div id="twilio-warning" class="warning" style="display:none">
-      ⚠️ Twilio not configured — reminders will fire but calls won't be made.
+      ⚠️ Twilio not configured — calls won't be made.
       See <code>.env.example</code> for setup instructions.
+    </div>
+
+    <div id="db-warning" class="warning" style="display:none">
+      ⚠️ Database not connected — reminders and verification won't work.
+      Set <code>DATABASE_URL</code> in your <code>.env</code> file and restart the server.
     </div>
 
     <form id="reminder-form">

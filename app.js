@@ -248,9 +248,11 @@ function escapeHtml(str) {
 async function checkStatus() {
   try {
     const res = await fetch('/api/status');
-    const { twilioConfigured } = await res.json();
+    const { twilioConfigured, dbConnected } = await res.json();
     document.getElementById('twilio-warning').style.display =
       twilioConfigured ? 'none' : 'block';
+    document.getElementById('db-warning').style.display =
+      dbConnected ? 'none' : 'block';
   } catch { /* ignore */ }
 }
 
