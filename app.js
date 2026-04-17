@@ -20,7 +20,7 @@ setMinAndDefaultTime();
 // Test call button
 document.getElementById('test-call-btn').addEventListener('click', async () => {
   const phoneNumber = phoneInput.value.trim();
-  if (!phoneNumber.startsWith('+')) {
+  if (!phoneNumber) {
     showFeedback('Enter a phone number first (e.g. 4155551234)', 'error');
     return;
   }
