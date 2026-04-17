@@ -27,10 +27,17 @@ setInterval(setMinAndDefaultTime, 60000);
 
 // ── Phone Verification ──
 
+const consentCheckbox = document.getElementById('consent-checkbox');
+
 verifyBtn.addEventListener('click', async () => {
   const phoneNumber = phoneInput.value.trim();
   if (!phoneNumber) {
     showFeedback('Enter a phone number first.', 'error');
+    return;
+  }
+
+  if (!consentCheckbox.checked) {
+    showFeedback('You must agree to the Privacy Policy and Terms & Conditions.', 'error');
     return;
   }
 
