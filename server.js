@@ -10,8 +10,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
+const DELAY_PHONE_PICKUP = "... ... "
 const TEST_CALL_MESSAGE =
-  '... You are the D.R.I.' + 
+  DELAY_PHONE_PICKUP + 
+  'You are the D.R.I.' + 
   'A sev 1 incident has been raised against your service. ' +
   'You are the D.R.I. Panic Panic Panic!';
 
