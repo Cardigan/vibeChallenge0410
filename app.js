@@ -21,7 +21,7 @@ setMinAndDefaultTime();
 document.getElementById('test-call-btn').addEventListener('click', async () => {
   const phoneNumber = phoneInput.value.trim();
   if (!phoneNumber.startsWith('+')) {
-    showFeedback('Enter a phone number first (e.g. +14155551234)', 'error');
+    showFeedback('Enter a phone number first (e.g. 4155551234)', 'error');
     return;
   }
 
@@ -51,8 +51,8 @@ form.addEventListener('submit', async (e) => {
   const phoneNumber = phoneInput.value.trim();
   const reminderTime = new Date(timeInput.value).toISOString();
 
-  if (!phoneNumber.startsWith('+')) {
-    showFeedback('Phone number must start with + (e.g. +14155551234)', 'error');
+  if (!phoneNumber) {
+    showFeedback('Enter a phone number (e.g. 4155551234)', 'error');
     return;
   }
 

@@ -17,14 +17,23 @@ const REMINDER_MESSAGE =
 const reminders = new Map();
 let nextId = 1;
 
+// Normalize phone number: assume US (+1) if no country code
+function normalizePhone(raw) {
+  if (!raw) return null;
+  let phone = raw.replace(/[\s\-().]/g, '');
+  if (!phone.startsWith('+')) {
+    phone = '+1' + phone;
+  }
+  return /^\+[1-9]\d{6,14}$/.test(phone) ? phone : null;
+}
+
 // Create a reminder
 app.post('/api/reminders', (req, res) => {
-  const { phoneNumber, reminderTime } = req.body;
+  const phoneNumber = normalizePhone(req.body.phoneNumber);
 
-  // Validate phone number (E.164 format)
-  if (!phoneNumber || !/^\+[1-9]\d{6,14}$/.test(phoneNumber)) {
+  if (!phoneNumber) {
     return res.status(400).json({
-      error: 'Invalid phone number. Use E.164 format (e.g. +14155551234)',
+      error: 'Invalid phone number. Example: 4155551234 or +14155551234',
     });
   }
 
@@ -86,11 +95,11 @@ app.delete('/api/reminders/:id', (req, res) => {
 
 // Test call — calls immediately
 app.post('/api/test-call', async (req, res) => {
-  const { phoneNumber } = req.body;
+  const phoneNumber = normalizePhone(req.body.phoneNumber);
 
-  if (!phoneNumber || !/^\+[1-9]\d{6,14}$/.test(phoneNumber)) {
+  if (!phoneNumber) {
     return res.status(400).json({
-      error: 'Invalid phone number. Use E.164 format (e.g. +14155551234)',
+      error: 'Invalid phone number. Example: 4155551234 or +14155551234',
     });
   }
 
