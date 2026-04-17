@@ -10,8 +10,8 @@ app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 const REMINDER_MESSAGE =
-  'Hello! This is your scheduled reminder. ' +
-  "Don't forget about your upcoming event. Goodbye!";
+  'A sev 1 has been raised against your service. ' +
+  'You are the D.R.I. Panic Panic Panic!';
 
 // In-memory storage
 const reminders = new Map();
