@@ -37,7 +37,7 @@ app.post('/api/reminders', (req, res) => {
     });
   }
 
-  const scheduledDate = new Date(reminderTime);
+  const scheduledDate = new Date(req.body.reminderTime);
   if (isNaN(scheduledDate.getTime()) || scheduledDate <= new Date()) {
     return res
       .status(400)
