@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
-const DELAY_PHONE_PICKUP = "... ... "
+const DELAY_PHONE_PICKUP = "... ... ... ... "
 const TEST_CALL_MESSAGE =
   DELAY_PHONE_PICKUP + 
   'You are the D.R.I.' + 
